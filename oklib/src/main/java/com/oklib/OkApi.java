@@ -1,17 +1,24 @@
 package com.oklib;
 
-import com.oklib.callback.CallBack;
 import com.oklib.body.BitmapBody;
 import com.oklib.body.FileBody;
-import com.oklib.body.IBody;
+import com.oklib.callback.CallBack;
 import com.oklib.callback.FileCallBack;
 import com.oklib.core.Core;
 
-import java.util.List;
 import java.util.Map;
+
+import okhttp3.OkHttpClient;
 
 public class OkApi {
 
+    /**
+     * 设置配置信息
+     * @param builder
+     */
+    public static void config(OkHttpClient.Builder builder){
+        Core.core().builder(builder);
+    }
     public static void download(String url, Map<String, Object> params, FileCallBack fileCallBack) {
         Core.core().get(url, params, fileCallBack);
     }

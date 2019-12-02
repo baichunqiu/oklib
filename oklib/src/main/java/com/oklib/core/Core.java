@@ -5,6 +5,7 @@ import com.oklib.callback.CallBack;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -15,6 +16,10 @@ import okhttp3.Response;
 public class Core {
     private static final Core core = new Core();
     private static OkHttpClient mClient;
+    private OkHttpClient.Builder mBuilder = new OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .writeTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS);
 
     private Core() {
     }
@@ -25,9 +30,14 @@ public class Core {
 
     private OkHttpClient client() {
         if (null == mClient) {
-            mClient = new OkHttpClient();
+            mClient = mBuilder.build();
         }
         return mClient;
+    }
+
+    public void builder(OkHttpClient.Builder builder) {
+        this.mBuilder = builder;
+        mClient = null;
     }
 
     /**
@@ -57,10 +67,10 @@ public class Core {
      * @param callBack 回调
      */
     public <T> void get(String url, Map<String, Object> params, CallBack<T> callBack) {
-        Request request = new Request.Builder()
-                .url(Transform.urlAppendParam(url, params))
-                .build();
-        request(request, callBack);
+        Request.Builder builder = new Request.Builder()
+                .url(Transform.urlAppendParam(url, params));
+        callBack.onBefore(builder);
+        request(builder.build(), callBack);
     }
 
     /**
@@ -69,11 +79,11 @@ public class Core {
      * @param callBack 回调
      */
     public <T> void post(String url, RequestBody body, CallBack<T> callBack) {
-        Request request = new Request.Builder()
+        Request.Builder builder = new Request.Builder()
                 .url(url)
-                .post(body)
-                .build();
-        request(request, callBack);
+                .post(body);
+        callBack.onBefore(builder);
+        request(builder.build(), callBack);
     }
 
     /**
@@ -83,8 +93,6 @@ public class Core {
      * @param callback 回调
      */
     private final <T> void request(Request request, final CallBack<T> callback) {
-        if (null == callback) return;
-        callback.onBefore(request);
         client().newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, final IOException e) {

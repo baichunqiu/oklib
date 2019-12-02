@@ -4,8 +4,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public interface CallBack<T> {
-    //  UI Thread
-    void onBefore(Request request);
+    //  UI Thread 此处可自主添加本次请求header
+    void onBefore(Request.Builder builder);
 
     // 非UI Thread
     T onParse(Response response) throws Exception;

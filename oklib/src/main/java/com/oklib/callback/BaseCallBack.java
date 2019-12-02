@@ -6,7 +6,7 @@ import okhttp3.Request;
 
 public abstract class BaseCallBack<T> implements CallBack<T> {
     @Override
-    public void onBefore(Request request) {
+    public void onBefore(Request.Builder request) {
     }
 
     @Override

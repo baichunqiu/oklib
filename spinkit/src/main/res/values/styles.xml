@@ -1,0 +1,10 @@
+<resources>
+    <!--SpinKitView 自定义 -->
+    <style name="SpinKitView">
+        <item name="android:indeterminateOnly">true</item>
+        <item name="android:minWidth">40dip</item>
+        <item name="android:maxWidth">40dip</item>
+        <item name="android:minHeight">40dip</item>
+        <item name="android:maxHeight">40dip</item>
+    </style>
+</resources>
