@@ -1,7 +1,7 @@
 package com.bcq.net;
 
-import com.bcq.net.domain.Request;
 import com.kit.Logger;
+import com.oklib.core.ReQuest;
 
 /**
  * @Author: BaiCQ
@@ -19,7 +19,7 @@ public abstract class BaseProcessor implements Processor{
     private int lastCode = 0;
 
     @Override
-    public final void process(int code, Request request) {
+    public final void process(int code, ReQuest request) {
         if (code != lastCode) {
             repeat = 1;
         } else {
@@ -30,7 +30,7 @@ public abstract class BaseProcessor implements Processor{
             return;
         }
         if (processCode(code))
-            request.requestAgain();
+            request.request();
     }
 
     /**

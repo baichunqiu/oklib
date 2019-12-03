@@ -5,7 +5,9 @@ import com.oklib.body.FileBody;
 import com.oklib.callback.CallBack;
 import com.oklib.callback.FileCallBack;
 import com.oklib.core.Core;
+import com.oklib.core.ReQuest;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.OkHttpClient;
@@ -14,31 +16,45 @@ public class OkApi {
 
     /**
      * 设置配置信息
+     *
      * @param builder
      */
-    public static void config(OkHttpClient.Builder builder){
+    public static void config(OkHttpClient.Builder builder) {
         Core.core().builder(builder);
     }
-    public static void download(String url, Map<String, Object> params, FileCallBack fileCallBack) {
-        Core.core().get(url, params, fileCallBack);
+
+    public static ReQuest download(String url, Map<String, Object> params, FileCallBack fileCallBack) {
+        return get(url, params, fileCallBack);
     }
 
-    public static <T> void bitmap(String url, String key, BitmapBody bitmap, CallBack<T> callBack) {
-        Core.core().post(url, key, bitmap, callBack);
+    public static <T> ReQuest bitmap(String url, String key, BitmapBody bitmap, CallBack<T> callBack) {
+        Map<String, Object> params = new HashMap<>(2);
+        params.put(key, bitmap);
+        return post(url, params, callBack);
     }
 
-    public static <T> void file(String url, String key, FileBody fileBody, CallBack<T> callBack) {
-        Core.core().post(url, key, fileBody, callBack);
+    public static <T> ReQuest file(String url, String key, FileBody fileBody, CallBack<T> callBack) {
+        Map<String, Object> params = new HashMap<>(2);
+        params.put(key, fileBody);
+        return post(url, params, callBack);
     }
 
-
-    public static <T> void get(String url, Map<String, Object> params, CallBack<T> callBack) {
-        Core.core().get(url, params, callBack);
+    public static <T> ReQuest get(String url, Map<String, Object> params, CallBack<T> callBack) {
+        return ReQuest.Builder.get()
+                .url(url)
+                .param(params)
+                .callback(callBack)
+                .build()
+                .request();
     }
 
-    public static <T> void post(String url, Map<String, Object> params, CallBack<T> callBack) {
-        Core.core().post(url, params, callBack);
+    public static <T> ReQuest post(String url, Map<String, Object> params, CallBack<T> callBack) {
+        return ReQuest.Builder.post()
+                .url(url)
+                .param(params)
+                .callback(callBack)
+                .build()
+                .request();
     }
-
 
 }

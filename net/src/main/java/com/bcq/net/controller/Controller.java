@@ -1,14 +1,14 @@
 package com.bcq.net.controller;
 
-import com.bcq.net.NetKit;
+import com.bcq.net.NetApi;
 import com.bcq.net.callback.base.BaseCallback;
 import com.bcq.net.callback.base.BaseListCallback;
 import com.bcq.net.callback.base.IRefreshView;
-import com.bcq.net.domain.Request;
-import com.bcq.net.enums.ReqMode;
 import com.bcq.net.view.LoadTag;
 import com.business.parse.Parser;
 import com.kit.Logger;
+import com.oklib.core.Method;
+import com.oklib.core.ReQuest;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.Map;
 public abstract class Controller<T> implements IPage {
     public final static String TAG = "Controller";
     private Class<T> tClass;
-    private Request<List<T>, Boolean> request;
+    private ReQuest<List<T>> request;
     protected int currentPage = PAGE_FIRST;//当前页的索引
 
     public Controller(Class<T> clazz) {
@@ -37,25 +37,25 @@ public abstract class Controller<T> implements IPage {
      */
     protected void requestAgain(boolean refresh) {
         if (null != request) {
-            Map<String, Object> params = request.getParams();
+            Map<String, Object> params = request.param();
             if (null != params && params.containsKey(KEY_PAGE_INDEX)) {
                 currentPage = refresh ? PAGE_FIRST : Integer.valueOf(params.get(KEY_PAGE_INDEX).toString()) + 1;
                 params.put(KEY_PAGE_INDEX, currentPage + "");
             }
-            request = (Request<List<T>, Boolean>) request.requestAgain();
+            request = request.request();
         }
     }
 
     public void postArr(String url, Map<String, Object> params, LoadTag loadBar) {
-        obtainNetData(true, url, params, null, loadBar, ReqMode.POST, null, null);
+        request(true, url, params, null, loadBar, Method.post, null, null);
     }
 
     public void getArr(String url, Map<String, Object> params, LoadTag loadBar) {
-        obtainNetData(true, url, params, null, loadBar, ReqMode.GET, null, null);
+        request(true, url, params, null, loadBar, Method.get, null, null);
     }
 
-    protected final void obtainNetData(final boolean isRefresh, String mUrl, Map<String, Object> params, Parser parser, LoadTag dialog, ReqMode reqMode, final IOperate operator, IRefreshView refreshView) {
-        Logger.e(TAG, "obtainNetData");
+    protected final void request(final boolean isRefresh, String url, Map<String, Object> params, Parser parser, LoadTag dialog, Method method, final IOperate operator, IRefreshView refreshView) {
+        Logger.e(TAG, "request");
         if (null != operator) {//operator 不为空 需要分页处理
             if (isRefresh) currentPage = PAGE_FIRST;
             if (null == params) params = new HashMap<>(2);
@@ -82,8 +82,8 @@ public abstract class Controller<T> implements IPage {
             }
 
             @Override
-            public void onAfter (int status, String msg) {
-                super.onAfter( status, msg);
+            public void onAfter(int status, String msg) {
+                super.onAfter(status, msg);
                 onRefreshData(tempData, isRefresh);
                 if (null == tempData && null != operator) operator.onError(status, msg);
             }
@@ -93,27 +93,23 @@ public abstract class Controller<T> implements IPage {
                 return tClass;
             }
         };
-        if (reqMode == ReqMode.GET) {
-            request = NetKit.getArr(dialog, mUrl, params, parser, baseListCallback);
-        } else {
-            request = NetKit.postArr(dialog, mUrl, params, parser, baseListCallback);
-        }
+        request = NetApi.request(dialog, url, params, parser, method, baseListCallback);
     }
 
 
     /**
      * 没有结果集，只有状态的post请求
      *
-     * @param mUrl   url
-     * @param params 参数
-     * @param dialog 进度条
+     * @param url
+     * @param params
+     * @param dialog
      */
-    public void post(final String mUrl, Map<String, Object> params, LoadTag dialog) {
-        NetKit.post(dialog, mUrl, params, new BaseCallback() {
+    public void operate(final String url, Map<String, Object> params, LoadTag dialog) {
+        NetApi.operate(dialog, url, params, Method.post, new BaseCallback() {
             @Override
             public void onAfter(int status, String sysMsg) {
                 super.onAfter(status, sysMsg);
-                _onResponceCallBack(mUrl, status, sysMsg);
+                _onResponceCallBack(url, status, sysMsg);
             }
         });
     }

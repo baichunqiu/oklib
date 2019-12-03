@@ -1,6 +1,6 @@
 package com.bcq.net;
 
-import com.bcq.net.domain.Request;
+import com.oklib.core.ReQuest;
 
 /**
  * @author: BaiCQ
@@ -9,5 +9,5 @@ import com.bcq.net.domain.Request;
  * @Description: error code processor 错误处理接口
  */
 public interface Processor {
-    void process(int code, Request request);
+    void process(int code, ReQuest request);
 }

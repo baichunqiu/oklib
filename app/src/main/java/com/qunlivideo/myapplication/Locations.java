@@ -49,22 +49,23 @@ public class Locations {
         criteria.setAccuracy(Criteria.ACCURACY_FINE); //定位精度: 最高
         criteria.setAltitudeRequired(false); //海拔信息：不需要
         criteria.setBearingRequired(false); //方位信息: 不需要
-        criteria.setCostAllowed(false);  //是否允许付费
+        criteria.setCostAllowed(true);  //是否允许付费
         criteria.setPowerRequirement(Criteria.POWER_LOW); //耗电量: 低功耗
         String provider = manager.getBestProvider(criteria, true); //获取GPS信息
         manager.requestLocationUpdates(provider, 2000, 5, new LocalCallBack() {
             @Override
             public void onLocationChanged(Location location) {
                 String address = "";
+                Log.e("onLocationChanged", location.toString());
                 if (location != null) {
                     //获取国家，省份，城市的名称
                     Log.e("location", location.toString());
                     List<Address> m_list = getAddress(context, location);
-                    Log.e("str", m_list.toString());
-                    for (int i = 0; i < m_list.size(); i++) {
-                        Log.e("location", "str pos = " + i + m_list.get(i).toString());
-                    }
                     if (m_list != null && m_list.size() > 0) {
+                        Log.e("str", m_list.toString());
+                        for (int i = 0; i < m_list.size(); i++) {
+                            Log.e("location", "str pos = " + i + m_list.get(i).toString());
+                        }
                         address = m_list.get(0).getLocality();//获取城市
                     }
                 }

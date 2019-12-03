@@ -4,8 +4,6 @@ import com.business.DataInfo;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
-
 /**
  * @author: BaiCQ
  * @ClassName: DefauParser
@@ -33,6 +31,6 @@ public class DefauParser implements Parser {
 
     @Override
     public String[] headers() {
-        return new String[0];
+        return new String[]{TOKEN_KEY};
     }
 }

@@ -1,6 +1,5 @@
 package com.oklib.core;
 
-import com.oklib.body.IBody;
 import com.oklib.callback.CallBack;
 
 import java.io.IOException;
@@ -30,7 +29,7 @@ public class Core {
 
     private OkHttpClient client() {
         if (null == mClient) {
-            mClient = mBuilder.build();
+            mClient = new OkHttpClient();
         }
         return mClient;
     }
@@ -38,16 +37,6 @@ public class Core {
     public void builder(OkHttpClient.Builder builder) {
         this.mBuilder = builder;
         mClient = null;
-    }
-
-    /**
-     * @param url      请求地址
-     * @param key      键
-     * @param iBody    IBody类型
-     * @param callBack 回调
-     */
-    public <T> void post(String url, String key, IBody iBody, CallBack<T> callBack) {
-        post(url, Transform.param2Body(key, iBody), callBack);
     }
 
     /**
@@ -78,7 +67,7 @@ public class Core {
      * @param body     body
      * @param callBack 回调
      */
-    public <T> void post(String url, RequestBody body, CallBack<T> callBack) {
+    protected <T> void post(String url, RequestBody body, CallBack<T> callBack) {
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .post(body);

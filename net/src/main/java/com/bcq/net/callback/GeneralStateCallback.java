@@ -1,20 +1,20 @@
 package com.bcq.net.callback;
 
-import com.bcq.net.domain.Request;
-import com.bcq.net.view.LoadTag;
 import com.business.DataInfo;
 import com.business.GeneralCallBack;
 import com.business.IBusiCallback;
 import com.business.ILoadTag;
+import com.business.parse.Parser;
 
 /**
  * @author: BaiCQ
- * @ClassName: BusiCallback
- * @Description: 业务处理 没有body的回调
+ * @ClassName: GeneralStateCallback
+ * @Description: 状态回调
  */
-public class BusiCallback extends GeneralCallBack<Integer, String> {
-    public BusiCallback(Request<Integer, String> request) {
-        super(request.getTag(), request.getParser(), request.getiCallback());
+public class GeneralStateCallback extends GeneralCallBack<Integer, String> {
+
+    public GeneralStateCallback(ILoadTag loadTag, Parser parser, IBusiCallback<Integer, String> iBusiCallback) {
+        super(loadTag, parser, iBusiCallback);
     }
 
     @Override

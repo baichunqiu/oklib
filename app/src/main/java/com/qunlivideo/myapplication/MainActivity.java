@@ -1,15 +1,15 @@
 package com.qunlivideo.myapplication;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bcq.net.NetKit;
+import com.bcq.net.NetApi;
 import com.bcq.net.callback.base.BaseListCallback;
+import com.oklib.core.Method;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,21 +45,22 @@ public class MainActivity extends AppCompatActivity {
 //
 //            }
 //        });
-//        Locations.location(this, new Locations.OnLocationListener() {
-//            @Override
-//            public void onLocalAddress(int code, String address) {
-//                Log.e("MainActivity", "address = " + address);
-//            }
-//        });
-
-        NetKit.getArr(null, url, param, new BaseListCallback<String>() {
+        Locations.location(this, new Locations.OnLocationListener() {
             @Override
-            public void onSuccess(List<String> strings, Boolean loadFull) {
-//                super.onSuccess(strings, loadFull);
-                Log.e("MainActivity", "onResponse");
-                String infos = strings.get(0);
-                if (!TextUtils.isEmpty(infos)) {
-                    info.setText(infos);
+            public void onLocalAddress(int code, String address) {
+                Log.e("MainActivity", "address = " + address);
+                String text = info.getText().toString().trim();
+                info.setText("位置：" + address + text);
+            }
+        });
+
+        NetApi.request(null, url, param, Method.get, new BaseListCallback<Weather>() {
+            @Override
+            public void onSuccess(List<Weather> strings, Boolean loadFull) {
+                Weather infos = strings.get(0);
+                if (null != infos) {
+                    String text = info.getText().toString().trim();
+                    info.setText(text + "天气：" + infos.getWeather());
                 }
             }
         });
