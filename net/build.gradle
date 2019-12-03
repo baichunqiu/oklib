@@ -28,5 +28,5 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.2.1")
     implementation project(':spinkit')
     implementation project(':kit')
-    api project(':oklib')
+    api project(':oklibs')
 }
